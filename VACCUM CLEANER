@@ -1,0 +1,31 @@
+# Vacuum Cleaner Problem
+
+room_A = "Dirty"
+room_B = "Dirty"
+
+location = "A"
+
+while room_A == "Dirty" or room_B == "Dirty":
+
+    if location == "A":
+        if room_A == "Dirty":
+            print("Room A is Dirty")
+            print("Action: SUCK")
+            room_A = "Clean"
+        else:
+            print("Room A is Clean")
+            print("Action: Move Right to Room B")
+            location = "B"
+
+    elif location == "B":
+        if room_B == "Dirty":
+            print("Room B is Dirty")
+            print("Action: SUCK")
+            room_B = "Clean"
+        else:
+            print("Room B is Clean")
+            print("Action: Move Left to Room A")
+            location = "A"
+
+print("Both rooms are Clean")
+print("Vacuum Cleaning Completed")
