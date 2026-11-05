@@ -1,0 +1,76 @@
+
+def dfs(start, goal, max_depth=6):
+    stack = [(start, [], 0)]
+    visited = set()
+
+    while stack:
+        state, path, depth = stack.pop()
+
+        if state == goal:
+            return path + [state]
+
+        if depth >= max_depth:
+            continue
+
+        if state in visited:
+            continue
+
+        visited.add(state)
+
+        zero = state.index(0)
+        row, col = zero // 3, zero % 3
+
+        moves = [
+            (-1, 0),  # Up
+            (1, 0),   # Down
+            (0, -1),  # Left
+            (0, 1)    # Right
+        ]
+
+        for dr, dc in moves:
+            new_row = row + dr
+            new_col = col + dc
+
+            if 0 <= new_row < 3 and 0 <= new_col < 3:
+                new_zero = new_row * 3 + new_col
+
+                new_state = list(state)
+                new_state[zero], new_state[new_zero] = (
+                    new_state[new_zero], new_state[zero]
+                )
+
+                new_state = tuple(new_state)
+
+                if new_state not in visited:
+                    stack.append(
+                        (new_state, path + [state], depth + 1)
+                    )
+
+    return None
+
+
+# Initial state
+start = (1, 2, 3,
+         4, 0, 6,
+         7, 5, 8)
+
+# Goal state
+goal = (1, 2, 3,
+        4, 5, 6,
+        7, 8, 0)
+
+# Run DFS
+solution = dfs(start, goal)
+
+# Print result
+if solution:
+    print("Solution Found!")
+    print("Steps:", len(solution) - 1)
+
+    for step in solution:
+        for i in range(0, 9, 3):
+            print(*step[i:i+3])
+        print()
+else:
+    print("Solution not found within depth limit.")
+
