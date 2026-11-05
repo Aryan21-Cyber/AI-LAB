@@ -1,0 +1,72 @@
+
+import random
+
+def heuristic(state):
+    conflicts = 0
+    n = len(state)
+
+    for i in range(n):
+        for j in range(i + 1, n):
+            if state[i] == state[j] or abs(state[i] - state[j]) == abs(i - j):
+                conflicts += 1
+
+    return conflicts
+
+
+def hill_climbing(n):
+    # Random initial state
+    state = [random.randint(0, n - 1) for _ in range(n)]
+
+    while True:
+        current_h = heuristic(state)
+
+        if current_h == 0:
+            return state
+
+        best_state = state[:]
+        best_h = current_h
+
+        # Generate neighbouring states
+        for col in range(n):
+            for row in range(n):
+                if state[col] != row:
+                    neighbour = state[:]
+                    neighbour[col] = row
+
+                    h = heuristic(neighbour)
+
+                    if h < best_h:
+                        best_h = h
+                        best_state = neighbour
+
+        # Stop if no better neighbour exists
+        if best_h >= current_h:
+            return None
+
+        state = best_state
+
+
+def print_board(state):
+    n = len(state)
+
+    for row in range(n):
+        for col in range(n):
+            if state[col] == row:
+                print("Q", end=" ")
+            else:
+                print(".", end=" ")
+        print()
+
+
+# Main program
+n = int(input("Enter the value of N: "))
+
+solution = hill_climbing(n)
+
+if solution:
+    print("\nSolution Found!")
+    print("Queen positions:", solution)
+    print("\nChess Board:")
+    print_board(solution)
+else:
+    print("\nLocal maximum reached! No solution found.")
