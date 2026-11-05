@@ -1,0 +1,72 @@
+from itertools import product
+
+def implies(p, q):
+    return not p or q
+
+def biconditional(p, q):
+    return p == q
+
+def check_kb(model):
+    P, Q, R = model
+
+    s1 = biconditional(P, Q)  # P <-> Q
+    s2 = Q or R               # Q OR R
+    s3 = implies(not P, R)    # NOT P -> R
+
+    return s1 and s2 and s3
+
+def tt_entails(query):
+    symbols = ['P', 'Q', 'R']
+    entails = True
+
+    for values in product([True, False], repeat=3):
+        model = dict(zip(symbols, values))
+
+        if check_kb(values):
+            if not query(model):
+                entails = False
+
+    return entails
+
+print("TRUTH TABLE ENUMERATION")
+print("-" * 75)
+print("P\tQ\tR\tP<->Q\tQ OR R\tNOT P->R\tKB")
+
+models = []
+
+for values in product([True, False], repeat=3):
+    P, Q, R = values
+
+    s1 = biconditional(P, Q)
+    s2 = Q or R
+    s3 = implies(not P, R)
+
+    kb = s1 and s2 and s3
+
+    if kb:
+        models.append(values)
+
+    print(
+        P, Q, R, s1, s2, s3, kb,
+        sep="\t"
+    )
+
+print("\nModels of KB:")
+for model in models:
+    print(model)
+
+print("\nENTAILMENT RESULTS")
+print("-" * 40)
+
+# Query 1: Q
+q1 = tt_entails(lambda m: m['Q'])
+print("KB entails Q:", q1)
+
+# Query 2: P -> Q
+q2 = tt_entails(lambda m: implies(m['P'], m['Q']))
+print("KB entails P -> Q:", q2)
+
+# Query 3: R -> Q
+q3 = tt_entails(lambda m: implies(m['R'], m['Q']))
+print("KB entails R -> Q:", q3)
+
