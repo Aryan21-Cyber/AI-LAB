@@ -1,0 +1,91 @@
+
+import random
+import math
+
+def heuristic(state):
+    conflicts = 0
+    n = len(state)
+
+    for i in range(n):
+        for j in range(i + 1, n):
+            if state[i] == state[j] or abs(state[i] - state[j]) == abs(i - j):
+                conflicts += 1
+
+    return conflicts
+
+
+def simulated_annealing(n):
+    # Generate random initial state
+    state = [random.randint(0, n - 1) for _ in range(n)]
+
+    temperature = 1000
+    cooling_rate = 0.99
+    min_temperature = 0.001
+
+    while temperature > min_temperature:
+
+        current_h = heuristic(state)
+
+        # Goal test
+        if current_h == 0:
+            return state
+
+        # Generate a neighbouring state
+        neighbour = state[:]
+
+        col = random.randint(0, n - 1)
+        row = random.randint(0, n - 1)
+
+        neighbour[col] = row
+
+        new_h = heuristic(neighbour)
+
+        # Calculate change in heuristic
+        delta = current_h - new_h
+
+        # Accept better states
+        if delta > 0:
+            state = neighbour
+
+        # Sometimes accept worse states
+        else:
+            probability = math.exp(delta / temperature)
+
+            if random.random() < probability:
+                state = neighbour
+
+        # Reduce temperature
+        temperature *= cooling_rate
+
+    if heuristic(state) == 0:
+        return state
+
+    return None
+
+
+def print_board(state):
+    n = len(state)
+
+    for row in range(n):
+        for col in range(n):
+            if state[col] == row:
+                print("Q", end=" ")
+            else:
+                print(".", end=" ")
+        print()
+
+
+# Main program
+n = int(input("Enter the value of N: "))
+
+solution = simulated_annealing(n)
+
+if solution is not None:
+    print("\nSolution Found!")
+    print("Queen positions:", solution)
+
+    print("\nChess Board:")
+    print_board(solution)
+
+else:
+    print("\nSolution not found! Try again.")
